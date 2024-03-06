@@ -10,26 +10,33 @@ def hello_world(anything):  # put application's code here
 
 @app.route('/login')
 def login():
-    return "<h1>Login</h1>"
+    return render_template("login.html")
 
 
 @app.route('/registration')
 def registration():
-    return "<h1>Registration</h1>"
+    return render_template("registration.html")
 
 
 @app.route('/dashboard')
 def dashboard():
     temp_map = {
-        "21-2-2024": 9.5,
-        "23-2-2024": 11.0,
-        "25-2-2024": 9.9,
-        "27-2-2024": 10.3,
-        "29-2-2024": 14.7,
-        "2-3-2024": 13.9,
-        "4-3-2024": 7.7
+        "21-2-2024 13:00:00": 9.5,
+        "21-2-2024 18:00:00": 6.5,
+        "23-2-2024 13:00:00": 11.0,
+        "23-2-2024 18:00:00": 9.3,
+        "25-2-2024 13:00:00": 9.9,
+        "25-2-2024 18:00:00": 10.7,
+        "27-2-2024 13:00:00": 10.3,
+        "27-2-2024 18:00:00": 4.3,
+        "29-2-2024 13:00:00": 14.7,
+        "29-2-2024 18:00:00": 15.3,
+        "2-3-2024 13:00:00": 13.9,
+        "2-3-2024 18:00:00": 15.4,
+        "4-3-2024 13:00:00": 8.6,
+        "4-3-2024 18:00:00": 7.7
     }
-    return "<h1>Dashboard</h1>"
+    return render_template("dashboard.html", data=temp_map)
 
 
 if __name__ == '__main__':

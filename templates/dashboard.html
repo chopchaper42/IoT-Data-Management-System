@@ -1,18 +1,57 @@
 {% extends 'base.html' %}
 
+{% block uname %}{{ user }}{% endblock %}
+
 {% block body %}
-<div class="container-md d-flex">
-    <table class="table mt-5 table-hover table-bordered">
+<div class="container-md d-flex flex-column">
+    <div class="d-flex my-3">
+        <p class="text me-2">The last measured temperature: </p>
+        <p>{{ data[last_temp] }} °C | {{ last_temp }}</p>
+    </div>
+    <div class="d-flex">
+        <div class="d-flex align-content-center">
+            <p class="text">Load the last n measured values: </p>
+
+        </div>
+        <div class="d-flex">
+            <form {#style="width: 5%" #}class="mr-5 d-flex" method="post">
+                <input id="X_input" type="text" class="form-control" name="n_load">
+                <input type="submit" value="Load">
+            </form>
+{#            <button class="btn btn-primary">Load</button>#}
+        </div>
+    </div>
+    <div class="d-flex">
+        <div class="d-flex align-content-center">
+            <p class="text">Delete the last n measured values: </p>
+
+        </div>
+        <div class="d-flex">
+            <form {#style="width: 5%" #}class="mr-5 d-flex" method="post">
+                <input id="X_input" type="text" class="form-control" name="n_delete">
+                <input type="submit" value="Delete" >
+            </form>
+{#            <button class="btn btn-primary"><a href="/delete/n_last/"></a></button>#}
+        </div>
+    </div>
+    <div>
+        <p><b>{{ t_number }}</b> records are saved in the database</p>
+    </div>
+    <table class="table mt-3 table-hover table-bordered">
         <thead class="table-dark">
         <tr>
             <td class="fw-bold">Date</td>
-            <td class="fw-bold temp-col">Temperature</td>
+            <td class="fw-bold">Temperature</td>
+            <td class="fw-bold" style="width: 20%">Delete</td>
         </tr>
         </thead>
         {% for date in data %}
             <tr>
                 <td>{{ date }}</td>
                 <td>{{ data[date] }} °C</td>
+                <td class="fw-bold" style="width: 10%">
+                    <button class="btn btn-primary"><a href="/delete/{{ date }}" class="text-white" style="text-decoration: none">Delete</a></button>
+                </td>
             </tr>
         {% endfor %}
     </table>

@@ -3,5 +3,23 @@
 {% block uname %}{{ user }}{% endblock %}
 
 {% block body %}
-    <h1>This is the login page</h1>
+    <div class="container">
+        <form method="post" action="#" class="mt-4">
+            <ul style="list-style-type: none">
+                <li class="my-2">
+                    <label for="email" class="input-text">Email:</label>
+                    <input type="email" name="email" id="email">
+                </li>
+                <li class="my-2">
+                    <label for="password" class="input-text">Password:</label>
+                    <input type="password" name="password" id="password">
+                </li>
+                <li>
+                    <input type="submit" name="submit" value="Register">
+                </li>
+            </ul>
+
+
+        </form>
+    </div>
 {% endblock %}

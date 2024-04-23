@@ -47,8 +47,8 @@
         </thead>
         {% for date in data %}
             <tr>
-                <td>{{ date }}</td>
-                <td>{{ data[date] }} °C</td>
+                <td>{{ date["timestamp"] }}</td>
+                <td>{{ date["value"] }} °C</td>
                 <td class="fw-bold" style="width: 10%">
                     <button class="btn btn-primary"><a href="/delete/{{ date }}" class="text-white" style="text-decoration: none">Delete</a></button>
                 </td>

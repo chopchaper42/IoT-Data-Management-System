@@ -4,40 +4,33 @@
 
 {% block body %}
 <div class="container-md d-flex flex-column">
-    <div class="d-flex my-3">
-        <p class="text me-2">The last measured temperature: </p>
-        <p>{{ data[last_temp] }} °C | {{ last_temp }}</p>
-    </div>
-    <div class="d-flex">
-        <div class="d-flex align-content-center">
-            <p class="text">Load the last n measured values: </p>
 
-        </div>
-        <div class="d-flex">
-            <form {#style="width: 5%" #}class="mr-5 d-flex" method="post">
-                <input id="X_input" type="text" class="form-control" name="n_load">
-                <input type="submit" value="Load">
-            </form>
-{#            <button class="btn btn-primary">Load</button>#}
+    <div class="d-flex my-1 mx-2">
+        <div class="d-flex align-content-center">
+            <p class="text align-self-center">Load the last n measured values: </p>
+            <input id="load_n_input" type="text" class="form-control ms-2" name="n_load" style="width: 80px">
+            <button class="btn btn-primary" id="load_n_button" onclick="">Load</button>
         </div>
     </div>
-    <div class="d-flex">
-        <div class="d-flex align-content-center">
+    <div class="d-flex my-1 mx-2">
+        <div class="d-flex align-items-center">
             <p class="text">Delete the last n measured values: </p>
-
-        </div>
-        <div class="d-flex">
-            <form {#style="width: 5%" #}class="mr-5 d-flex" method="post">
-                <input id="X_input" type="text" class="form-control" name="n_delete">
-                <input type="submit" value="Delete" >
-            </form>
-{#            <button class="btn btn-primary"><a href="/delete/n_last/"></a></button>#}
+            <input id="delete_n_input" type="text" class="form-control ms-2" name="n_delete" style="width: 80px">
+            <button class="btn btn-primary" id="delete_n_button" onclick="">Delete</button>
         </div>
     </div>
-    <div>
-        <p><b>{{ t_number }}</b> records are saved in the database</p>
+    <div class="d-flex justify-content-between">
+        <div class="my-1 mx-2 d-flex align-items-center">
+            <button class="btn btn-primary me-2" id="load_all_button" onclick="">Load All</button>
+            <p class="m-0" id="n_records_paragraph"><b id="n_of_records">X</b> records are saved in the database</p>
+        </div>
+        <div class="d-flex my-1 mx-2">
+            <p class="text me-2">The last measured temperature: <b><span id="last_temperature">N</span>°C</b></p>
+{#            <p id="n_of_records text-bold" class="m-0">{{ last_temp }}°C</p>#}
+        </div>
     </div>
-    <table class="table mt-3 table-hover table-bordered">
+    <div class="container" id="table"></div>
+    {#<table class="table mt-3 table-hover table-bordered">
         <thead class="table-dark">
         <tr>
             <td class="fw-bold">Date</td>
@@ -54,9 +47,10 @@
                 </td>
             </tr>
         {% endfor %}
-    </table>
+    </table>#}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
+    <script src="../static/scripts/dashboard.js"></script>
 </div>
 {% endblock %}

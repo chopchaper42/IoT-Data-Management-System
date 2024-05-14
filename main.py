@@ -1,16 +1,16 @@
 from flask import Flask, render_template, redirect, url_for
 from data import Data
 
-app = Flask(__name__)
+app = Flask(__name__, '/static')
 
 import api_routes
 
 username = "username"
 data = Data()
 
-@app.route('/<anything>')
-def hello_world(anything):  # put application's code here
-    return redirect(url_for('login'))
+# @app.route('/<anything>')
+# def hello_world(anything):  # put application's code here
+#     return redirect(url_for('login'))
 
 
 @app.route('/login')

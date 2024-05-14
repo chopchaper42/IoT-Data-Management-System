@@ -16,13 +16,8 @@ class Data:
         print("-" * 27)
 
     def add(self, temp):
-        # for a in self.data:
-        #     id = a["id"]
-            # if a["name"] == make:
-            #     print("Error - make already exist! " + str(a))
-            #     return
         time = datetime.now().strftime("%d.%m.%Y %-H:%-M:%-S")
-        self.temps.append({"timestamp": time, "value": temp})
+        self.temps.append({"timestamp": time, "value": float(temp)})
         self.save()
 
     # def edit(self, id, name):

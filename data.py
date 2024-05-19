@@ -20,17 +20,6 @@ class Data:
         self.temps.append({"timestamp": time, "value": float(temp)})
         self.save()
 
-    # def edit(self, id, name):
-    #     # for a in self.data:
-    #     #     if a["id"] == id:
-    #     #         a["name"] = name
-    #     self.save()
-
-    # def item(self, id):
-    #     for car in self.temps:
-    #         if car["id"] == id:
-    #             return car
-
     def last(self):
         return self.temps[len(self.temps)-1]
 
@@ -45,6 +34,17 @@ class Data:
         else:
             self.temps = self.temps[int(n):]
         self.save()
+
+    def delete(self, n):
+        index = -1
+        for i in range(0, len(self.temps)):
+            if self.temps[i]["timestamp"] == n:
+                index = i
+                break
+        if index > 0:
+            self.temps.pop(index)
+            self.save()
+        return self.temps
 
     def save(self):
         with open("temps.json", "w") as f:

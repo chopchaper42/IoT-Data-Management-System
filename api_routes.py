@@ -27,7 +27,7 @@ def last_n(n):
 
 # Smazání nejstarších Y naměřených hodnot.
 
-@app.route('/api/delete/<n>')
+@app.route('/api/delete_oldest/<n>')
 def delete_n(n):
     data.del_n_oldest(n)
     return data.temps
@@ -38,3 +38,13 @@ def delete_n(n):
 @app.route('/api/get_all_temps')
 def get_all_temps():
     return data.temps
+
+
+@app.route('/api/delete/<n>')
+def delete(n):
+    return data.delete(n)
+
+
+@app.route("/api/number_of_records")
+def number_of_records():
+    return { "value": len(data.temps) }

@@ -7,7 +7,6 @@ export function loadLastTemperature() {
           return response.json(); // This returns a Promise
         })
         .then(data => {
-          // Handle the JSON response data
           const lastTemperatureContainer = document.getElementById("last_temperature");
           lastTemperatureContainer.textContent = data.value; // Display the JSON data
         })
@@ -25,7 +24,6 @@ export function loadAllTemperatures() {
             throw new Error('Network response was not ok');
 
           loadNumberOfRecords();
-          tableBody.replaceChildren();
           return response.json();
         })
         .then(data => {
@@ -52,9 +50,32 @@ export function load_N() {
             throw new Error('Network response was not ok');
           }
 
-          tableBody.replaceChildren();
-          loadNumberOfRecords();
+          // loadNumberOfRecords();
           return response.json(); // This returns a Promise
+        })
+        .then(data => {
+            fillTableBodyWith(data);
+        })
+        .catch(error => {
+          // Handle errors
+          console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
+export function delete_last_N() {
+    const deleteLast_n_Input = document.getElementById("delete_n_input");
+    const number = parseInt(deleteLast_n_Input.value);
+    if (isNaN(number) || number < 0) {
+        throw new Error("Invalid value!");
+    }
+
+    fetch("/api/delete_oldest/" + number)
+        .then(response => {
+            if (!response.ok)
+                throw new Error('Network response was not ok');
+
+            loadNumberOfRecords();
+            return response.json();
         })
         .then(data => {
             fillTableBodyWith(data);
@@ -85,6 +106,8 @@ function loadNumberOfRecords() {
 
 function fillTableBodyWith(temperatures) {
     const tableBody = document.getElementsByTagName("tbody")[0];
+    tableBody.replaceChildren();
+
     for (const record of temperatures) {
           const row = document.createElement("tr");
           const timeCell = document.createElement("td");

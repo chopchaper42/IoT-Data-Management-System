@@ -1,27 +1,22 @@
 import json
+from flask import Flask, render_template, redirect, url_for, request, session, flash, Response
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from Temperature import Temperature
+from __main__ import db
 
 class Data:
-
-    temps: dict = []
-
-    def __init__(self):
-        with open("temps.json", "r") as f:
-            self.temps = json.load(f)
-
-    def list(self):
-        print("-" * 10 + "Temps: " + "-" * 10)
-        for i in self.temps:
-            print(i)
-        print("-" * 27)
-
     def add(self, temp):
         time = datetime.now().strftime("%d.%m.%Y %-H:%-M:%-S")
-        self.temps.append({"timestamp": time, "value": float(temp)})
-        self.save()
+        temperature = Temperature(timestamp=time, value=temp)
+        db.session.add(temperature)
+        db.session.commit()
+        print(f'New temperature record added: timestamp: {time}, value: {temp}')
 
     def last(self):
-        return self.temps[len(self.temps)-1]
+        # return self.temps[len(self.temps)-1]
+        return db.session.query(Temperature).order_by(Temperature.id.desc()).first()
+
 
     def last_n(self, n):
         if len(self.temps) <= int(n):

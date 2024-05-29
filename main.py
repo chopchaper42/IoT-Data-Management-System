@@ -1,56 +1,85 @@
-from flask import Flask, render_template, redirect, url_for, send_from_directory
-from data import Data
+import os
+from flask import Flask, render_template, redirect, url_for, request, session, flash
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__, '/static')
+# app = Flask(__name__, '/static')
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'WFN238w03vnlSO439gown44'
+db_file = os.path.join(os.getcwd(), 'temperature.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_file}'
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+
 
 import api_routes
-
-username = "username"
-data = Data()
-
-# @app.route('/<anything>')
-# def hello_world(anything):  # put application's code here
-#     return redirect(url_for('login'))
+from user import User
 
 
-@app.route('/login')
+@login_manager.unauthorized_handler
+def handler():
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template("login.html", user=username)
+    if request.method == 'POST':
+        print("login attempt")
+        login = request.form['login']
+        password = request.form['password']
+        user = User.query.filter_by(login=login).first()
+        if user and bcrypt.check_password_hash(user.hash, password):
+            login_user(user, remember=True)
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('login.html')
 
 
-@app.route('/registration')
+@app.route('/registration', methods=['GET','POST'])
 def registration():
-    return render_template("registration.html", user=username)
+    if request.method == 'POST':
+        print("registration attempt")
+        username = request.form['login']
+        password = request.form['password']
+        hashed_password = bcrypt.generate_password_hash(password)
+        user = User(login=username, hash=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Account created for {0}!'.format(username), 'success')
+        return redirect(url_for('login'))
+
+    return render_template('registration.html')
 
 
+@login_required
 @app.route('/dashboard')
 def dashboard():
-    temps_number = len(data.temps)
-    last_temp = data.temps[len(data.temps) - 1]
-    return render_template("dashboard.html", data=data.temps, user=username, last_temp=last_temp["value"], t_number=temps_number)
+    # temps_number = len(data.temps)
+    # last_temp = data.temps[len(data.temps) - 1]
+    print(f'Username: {current_user.login}')
+    return render_template("dashboard.html", user=current_user.login)
 
+
+@login_required
+@app.route('/')
+def index():
+    return redirect("/dashboard")
+
+
+@login_required
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 if __name__ == '__main__':
-    # temp_map = {
-    #     "21-2-2024 13:00:00": 9.5,
-    #     "21-2-2024 18:00:00": 6.5,
-    #     "23-2-2024 13:00:00": 11.0,
-    #     "23-2-2024 18:00:00": 9.3,
-    #     "25-2-2024 13:00:00": 9.9,
-    #     "25-2-2024 18:00:00": 10.7,
-    #     "27-2-2024 13:00:00": 10.3,
-    #     "27-2-2024 18:00:00": 4.3,
-    #     "29-2-2024 13:00:00": 14.7,
-    #     "29-2-2024 18:00:00": 15.3,
-    #     "2-3-2024 13:00:00": 13.9,
-    #     "2-3-2024 18:00:00": 15.4,
-    #     "4-3-2024 13:00:00": 8.6,
-    #     "4-3-2024 18:00:00": 7.7
-    # }
-    # new_temps = []
-    # for temp in temp_map:
-    #     new_temps.append({"timestamp": temp, "temp": temp_map[temp]})
-    #
-    # with open('temps.json', 'w') as f:
-    #     json.dump(new_temps, f)
     app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=True)

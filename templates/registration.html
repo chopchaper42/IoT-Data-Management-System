@@ -3,5 +3,18 @@
 {% block uname %}{{ user }}{% endblock %}
 
 {% block body %}
-    <h1>This is the registration page</h1>
+    <div class="container-sm w-50">
+    <form action="/registration" method="POST">
+        <div class="mb-3">
+            <label for="login_input" class="form-label">Login</label>
+            <input type="text" class="form-control" id="login_input" name="login" placeholder="Login...">
+        </div>
+        <div class="mb-3">
+            <label for="password_input" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password_input" name="password" placeholder="Password...">
+        </div>
+        <button class="btn btn-primary" id="registration-btn" type="submit">Register</button>
+    </form>
+    </div>
+{#    <script src="registration.html"></script>#}
 {% endblock %}

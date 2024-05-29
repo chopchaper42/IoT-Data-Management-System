@@ -1,28 +1,31 @@
 from __main__ import app
+import json
 from data import Data
+from flask import request, jsonify, Response
 
 data = Data()
 
 
 # Vložení hodnoty {“timestamp”: value, “temp”: value}
-@app.route('/api/add/<value>', methods=['POST'])
+@app.route('/api/add/<value>', methods=['POST', 'GET'])
 def add(value):
     data.add(value)
-    return data.temps
+    return jsonify(data.last())
 
 
 # Získání poslední hodnoty {“timestamp”: value, “temp”: value}
 
-@app.route('/api/last/')
+@app.route('/api/last/', methods=['GET'])
 def last():
-    return data.last()
+    return Response(json.dumps(data.last().to_json()), mimetype='application/json')
 
 
 # Získání posledních X naměřených hodnot.
 
 @app.route('/api/last/<n>')
 def last_n(n):
-    return data.last_n(n)
+    last_n = data.last_n(n)
+    return Response(json.dumps(last_n))
 
 
 # Smazání nejstarších Y naměřených hodnot.
@@ -48,3 +51,9 @@ def delete(n):
 @app.route("/api/number_of_records")
 def number_of_records():
     return { "value": len(data.temps) }
+
+
+@app.route("/api/register")
+def register():
+    login = request.args.get('login')
+    password = request.args.get('password')

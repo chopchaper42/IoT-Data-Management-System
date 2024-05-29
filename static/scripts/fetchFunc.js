@@ -69,7 +69,9 @@ export function delete_last_N() {
         throw new Error("Invalid value!");
     }
 
-    fetch("/api/delete_oldest/" + number)
+    fetch("/api/delete_oldest/" + number, {
+                    method: 'POST'
+        })
         .then(response => {
             if (!response.ok)
                 throw new Error('Network response was not ok');

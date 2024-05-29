@@ -7,10 +7,10 @@ class Temperature(db.Model):
     timestamp = db.Column(db.String(120), nullable=False, unique=True)
     value = db.Column(db.Double, nullable=False, unique=True)
 
-
-    def to_json(self):
+    def to_dict(self):
         return {
             "id": self.id,
             "timestamp": self.timestamp,
             "value": self.value
         }
+

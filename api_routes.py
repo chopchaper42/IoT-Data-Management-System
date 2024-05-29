@@ -9,51 +9,43 @@ data = Data()
 # Vložení hodnoty {“timestamp”: value, “temp”: value}
 @app.route('/api/add/<value>', methods=['POST', 'GET'])
 def add(value):
-    data.add(value)
-    return jsonify(data.last())
-
-
-# Získání poslední hodnoty {“timestamp”: value, “temp”: value}
+    data.add(float(value))
+    last_record = data.last()
+    return jsonify(last_record.to_dict())
 
 @app.route('/api/last/', methods=['GET'])
 def last():
-    return Response(json.dumps(data.last().to_json()), mimetype='application/json')
+    last_record = data.last()
+    return jsonify(last_record.to_dict())
 
-
-# Získání posledních X naměřených hodnot.
-
-@app.route('/api/last/<n>')
+@app.route('/api/last/<n>', methods=['GET'])
 def last_n(n):
-    last_n = data.last_n(n)
-    return Response(json.dumps(last_n))
+    last_n_records = data.last_n(int(n))
+    return jsonify([record.to_dict() for record in last_n_records])
 
-
-# Smazání nejstarších Y naměřených hodnot.
-
-@app.route('/api/delete_oldest/<n>')
+@app.route('/api/delete_oldest/<n>', methods=['POST'])
 def delete_n(n):
-    data.del_n_oldest(n)
-    return data.temps
+    data.del_n_oldest(int(n))
+    all_records = data.get_all()
+    return jsonify([record.to_dict() for record in all_records])
 
-
-# Ziskani vsech hodnot
-
-@app.route('/api/get_all_temps')
+@app.route('/api/get_all_temps', methods=['GET'])
 def get_all_temps():
-    return data.temps
+    all_records = data.get_all()
+    return jsonify([record.to_dict() for record in all_records])
 
+@app.route('/api/delete/<timestamp>', methods=['POST'])
+def delete(timestamp):
+    remaining_records = data.delete(timestamp)
+    return jsonify([record.to_dict() for record in remaining_records])
 
-@app.route('/api/delete/<n>')
-def delete(n):
-    return data.delete(n)
-
-
-@app.route("/api/number_of_records")
+@app.route("/api/number_of_records", methods=['GET'])
 def number_of_records():
-    return { "value": len(data.temps) }
+    count = data.count()
+    return jsonify({'value': count})
 
 
-@app.route("/api/register")
-def register():
-    login = request.args.get('login')
-    password = request.args.get('password')
+# @app.route("/api/register")
+# def register():
+#     login = request.args.get('login')
+#     password = request.args.get('password')

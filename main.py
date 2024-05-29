@@ -57,8 +57,8 @@ def registration():
 @login_required
 @app.route('/dashboard')
 def dashboard():
-    # temps_number = len(data.temps)
-    # last_temp = data.temps[len(data.temps) - 1]
+    if not current_user.is_authenticated:
+        redirect(url_for('login'))
     print(f'Username: {current_user.login}')
     return render_template("dashboard.html", user=current_user.login)
 
@@ -66,6 +66,8 @@ def dashboard():
 @login_required
 @app.route('/')
 def index():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
     return redirect("/dashboard")
 
 

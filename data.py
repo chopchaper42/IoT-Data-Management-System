@@ -7,7 +7,7 @@ from __main__ import db
 
 class Data:
     def add(self, temp):
-        time = datetime.now().strftime("%d.%m.%Y %-H:%-M-%S")
+        time = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
         temperature = Temperature(timestamp=time, value=temp)
         db.session.add(temperature)
         db.session.commit()

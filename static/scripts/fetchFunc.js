@@ -119,7 +119,7 @@ function fillTableBodyWith(temperatures) {
           const deleteCell = document.createElement("td");
           const deleteBtn = document.createElement("button");
           deleteBtn.onclick = function () {
-              fetch("/api/delete/" + record.timestamp)
+              fetch("/api/delete/" + record.timestamp, { method: "POST"})
                   .then(response => {
                       if (response.status === 200) {
                           console.log(`Record ${record.timestamp} successfully deleted`);

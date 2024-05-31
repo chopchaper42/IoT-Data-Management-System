@@ -7,20 +7,48 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from serial.serialutil import SerialException
+from flask_mqtt import Mqtt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'WFN238w03vnlSO439gown44'
 db_file = os.path.join(os.getcwd(), 'temperature.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_file}'
+app.config['MQTT_BROKER_URL'] = 'mqtt.eclipseprojects.io'
+app.config['MQTT_BROKER_PORT'] = 1883
+mqtt = Mqtt(app)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 serial_port = None
+
 try:
     serial_port = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 except SerialException:
     print("No device is connected")
+
+
+@mqtt.on_connect()
+def handle_connect(client, userdata, flags, rc):
+    print("connected to mqtt broker")
+    mqtt.subscribe('pico/temperature')
+
+
+@mqtt.on_message()
+def handle_mqtt_message(client, userdata, message):
+    with app.app_context():
+        data = dict(
+            topic=message.topic,
+            payload=message.payload.decode()
+        )
+        temperature = float(message.payload.decode())
+
+        timestamp = time.strftime('%Y.%m.%d %H:%M:%S', time.localtime())
+        temperature_entry = Temperature(value=temperature, timestamp=timestamp)
+        db.session.add(temperature_entry)
+        db.session.commit()
+
+        print('topic:{}, payload: {}'.format(message.topic, message.payload.decode()))
 
 import api_routes
 from user import User
@@ -108,8 +136,6 @@ def read_serial_and_write_to_db():
                     db.session.commit()
 
                     print(f'Temperature value {temperature_value} recorded.')
-                else:
-                    print('No data read from serial port')
             except ValueError:
                 print('Invalid data received from serial port')
             except Exception as e:
